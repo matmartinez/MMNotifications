@@ -24,6 +24,7 @@
 @interface _MMLocalNotificationViewController : UIViewController
 
 @property (strong, nonatomic) UIView *topView;
+@property (strong, nonatomic) id <MMNotificationPresentationContext> currentContext;
 @property (weak, nonatomic) UIWindow *window;
 
 @end
@@ -205,7 +206,14 @@
 - (void)cancelAllLocalNotifications
 {
     [self.scheduledNotificationQueue removeAllObjects];
-    [self _popNotification];
+    
+    if (self.notificationStack.count > 0) {
+        _MMLocalNotificationViewController *controller = self.window.rootViewController;
+        [controller setTopView:nil];
+        [controller setCurrentContext:nil];
+        
+        [self.notificationStack removeAllObjects];
+    }
 }
 
 - (void)cancelLocalNotification:(MMLocalNotification *)notification
@@ -216,6 +224,16 @@
     
     if ([self.scheduledNotificationQueue containsObject:notification]) {
         [self.scheduledNotificationQueue removeObject:notification];
+    }
+    
+    if ([self.notificationStack containsObject:notification]) {
+        [self.notificationStack removeObject:notification];
+    }
+    
+    _MMLocalNotificationViewController *controller = self.window.rootViewController;
+    if ([controller.currentContext.localNotification isEqual:notification]) {
+        [controller setTopView:nil];
+        [controller setCurrentContext:nil];
     }
 }
 
@@ -285,6 +303,8 @@
 
 - (void)_popNotification
 {
+    _MMLocalNotificationViewController *controller = self.window.rootViewController;
+    
     MMLocalNotification *notification = self.notificationStack.firstObject;
     if (notification) {
         MMBannerNotificationView *notificationView = [[[self _viewClassForNotification:notification] alloc] initWithFrame:CGRectZero];
@@ -296,10 +316,13 @@
         
         [notificationView awakeWithPresentationContext:ctx];
         
-        [self.window.rootViewController setTopView:notificationView];
+        [controller setTopView:notificationView];
+        [controller setCurrentContext:ctx];
+        
         [self.notificationStack removeObjectAtIndex:0];
     } else {
-        [self.window.rootViewController setTopView:nil];
+        [controller setTopView:nil];
+        [controller setCurrentContext:nil];
     }
 }
 
