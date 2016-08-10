@@ -36,4 +36,9 @@
  */
 @property (readonly, nonatomic) MMNotificationPresentationController *presentationController;
 
+/**
+ *  A gesture recognizer that provides a dismiss gesture.
+ */
+@property (readonly, nonatomic) UIGestureRecognizer *interactiveDismissGestureRecognizer;
+
 @end

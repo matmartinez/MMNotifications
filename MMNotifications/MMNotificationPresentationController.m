@@ -17,6 +17,7 @@
 
 @property (nonatomic, readwrite, strong) MMLocalNotification *localNotification;
 @property (nonatomic, readwrite, weak) MMNotificationPresentationController *presentationController;
+@property (nonatomic, readwrite, strong) UIGestureRecognizer *interactiveDismissGestureRecognizer;
 @property (weak, nonatomic) UIView <MMNotificationView> *notificationView;
 
 @end
@@ -112,12 +113,14 @@
     }
     
     CGRect bounds = self.view.bounds;
+    const BOOL isFromViewCurrentlyVisible = CGRectIntersectsRect(fromView.frame, bounds);
+    
     CGRect toViewRect = [self _rectForView:toView];
     CGRect fromViewRect = [self _rectForView:fromView];
     
     CGRect fromViewRectHidden = fromViewRect, toViewRectHidden = toViewRect;
     
-    if (fromView && toView) {
+    if ((fromView && isFromViewCurrentlyVisible) && toView) {
         const CGFloat pagingSpacing = 10.0f;
         
         fromViewRectHidden.origin.x = -CGRectGetWidth(fromViewRect) - pagingSpacing;
@@ -135,7 +138,10 @@
     
     [UIView animateWithDuration:0.5f delay:0 usingSpringWithDamping:1.0f initialSpringVelocity:1.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
         toView.frame = toViewRect;
-        fromView.frame = fromViewRectHidden;
+        
+        if (isFromViewCurrentlyVisible) {
+            fromView.frame = fromViewRectHidden;
+        }
     } completion:^(BOOL finished) {
         if (fromView) {
             [fromView removeFromSuperview];
@@ -314,6 +320,12 @@
         ctx.localNotification = notification;
         ctx.notificationView = notificationView;
         
+        if (notification.actions.count == 0) {
+            UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_interactiveDismissPanGestureRecognized:)];
+            
+            ctx.interactiveDismissGestureRecognizer = gestureRecognizer;
+        }
+        
         [notificationView awakeWithPresentationContext:ctx];
         
         [controller setTopView:notificationView];
@@ -360,6 +372,62 @@
     }
     
     return [MMBannerNotificationView class];
+}
+
+#pragma mark - Dismiss gesture.
+
+- (void)_interactiveDismissPanGestureRecognized:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    CGPoint velocity = [gestureRecognizer velocityInView:self.window];
+    UIView *view = gestureRecognizer.view;
+    
+    CGPoint translation = [gestureRecognizer translationInView:view];
+    CGFloat y = CGRectGetMinY(view.frame);
+    
+    const UIGestureRecognizerState state = gestureRecognizer.state;
+    
+    if (state == UIGestureRecognizerStateChanged) {
+        CGFloat proposedY = y + translation.y;
+        
+        const CGFloat dragCoefficient = 0.055;
+        const BOOL bounces = (proposedY > 0);
+        if (bounces) {
+            proposedY = y + (dragCoefficient * translation.y);
+        }
+        
+        CGRect frame = view.frame;
+        frame.origin.y = proposedY;
+        view.frame = frame;
+        
+        [gestureRecognizer setTranslation:CGPointZero inView:view];
+        
+    } else if (state == UIGestureRecognizerStateEnded) {
+        const BOOL isDismissing = (y <= 0);
+        
+        CGFloat destinationY = isDismissing ? -CGRectGetHeight(view.frame) : 0.0f;
+        
+        CGFloat distance = y - destinationY;
+        CGFloat animationDuration = 1.0f;
+        
+        CGFloat springVelocity = -1.0f * velocity.y / distance;
+        CGFloat springDampening = isDismissing ? 1.0f : 0.6f;
+        
+        [UIView animateWithDuration:animationDuration delay:0.0 usingSpringWithDamping:springDampening initialSpringVelocity:springVelocity options:UIViewAnimationOptionCurveLinear animations:^{
+            
+            CGRect frame = view.frame;
+            frame.origin.y = destinationY;
+            view.frame = frame;
+            
+        } completion:^(BOOL finished) {
+            if (isDismissing) {
+                _MMLocalNotificationWindow *window = (id)view.window;
+                _MMLocalNotificationViewController *hostingViewController = window.rootViewController;
+                _MMStockNotificationPresentationContext *context = hostingViewController.currentContext;
+                
+                [context dismissPresentationWithAction:nil];
+            }
+        }];
+    }
 }
 
 @end

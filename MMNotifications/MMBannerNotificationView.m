@@ -12,12 +12,15 @@
 
 @interface MMBannerNotificationView () {
     UIView *_backgroundView;
+    BOOL _attachesTopBackground;
+    
     UIView *_contentView;
     NSArray *_contentContainerViews;
     
     UILabel *_titleLabel;
     UILabel *_messageLabel;
     UIImageView *_imageView;
+    UIView *_dragIndicatorView;
     
     NSArray *_buttons;
 }
@@ -38,6 +41,15 @@
 
 @end
 
+@interface _MMBannerNotificationDragView : UIView {
+    UIVisualEffectView *_backgroundContainerView;
+    UIImageView *_imageView;
+}
+
+@property (strong, nonatomic) UIVisualEffect *backgroundVisualEffect;
+
+@end
+
 @implementation MMBannerNotificationView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -53,14 +65,16 @@
 
 - (void)awakeWithPresentationContext:(id<MMNotificationPresentationContext>)context
 {
-    [self _configureWithNotification:context.localNotification];
+    [self _configureViewsWithPresentationContext:context];
     
     self.notification = context.localNotification;
     self.context = context;
 }
 
-- (void)_configureWithNotification:(MMLocalNotification *)notification
+- (void)_configureViewsWithPresentationContext:(id<MMNotificationPresentationContext>)context
 {
+    MMLocalNotification *notification = context.localNotification;
+    
     // Create views.
     const BOOL visualEffectsSupported = [UIVisualEffectView class] != nil;
     
@@ -86,11 +100,7 @@
     // Content view.
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    if (visualEffectsSupported) {
-        [[(UIVisualEffectView *)backgrondView contentView] addSubview:contentView];
-    } else {
-        [self addSubview:contentView];
-    }
+    [self addSubview:contentView];
     
     _contentView = contentView;
     
@@ -168,6 +178,24 @@
     }
     
     _buttons = buttons;
+    
+    // Drag indicator.
+    UIGestureRecognizer *dismissGestureRecognizer = context.interactiveDismissGestureRecognizer;
+    if (dismissGestureRecognizer) {
+        _MMBannerNotificationDragView *dragView = [[_MMBannerNotificationDragView alloc] initWithFrame:CGRectZero];
+        
+        if (visualEffectsSupported) {
+            UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)[(id)backgrondView effect]];
+            
+            dragView.backgroundVisualEffect = vibrancyEffect;
+        }
+        
+        _dragIndicatorView = dragView;
+        
+        [contentView addSubview:dragView];
+        
+        [self addGestureRecognizer:dismissGestureRecognizer];
+    }
 }
 
 #pragma mark - Appearance.
@@ -235,6 +263,7 @@
     CGRect contentRect = [self contentRectForBounds:bounds];
     CGRect titleRect = [self titleRectForContentRect:contentRect];
     CGRect messageRect = [self messageRectForContentRect:contentRect];
+    CGRect dragIndicatorRect = [self dragIndicatorRectForContentRect:contentRect];
     
     // Layout buttons
     CGRect actionsRect = [self actionsRectForContentRect:contentRect];
@@ -259,6 +288,21 @@
         }
     }
     
+    // Insets.
+    CGRect statusBarRect = [self convertRect:[UIApplication sharedApplication].statusBarFrame fromView:nil];
+    
+    CGFloat attachedLength = -MIN(CGRectGetMinY(statusBarRect), 0);
+    
+    if (_attachesTopBackground || attachedLength > 0) {
+        _attachesTopBackground = YES;
+        
+        attachedLength = CGRectGetHeight(self.window.screen.bounds);
+    }
+    
+    UIEdgeInsets insets = (UIEdgeInsets){
+        .top = -attachedLength,
+    };
+    
     // Content containers.
     CGRect contentContainerRect = contentRect;
     contentContainerRect.origin = CGPointZero;
@@ -266,11 +310,27 @@
         view.frame = contentContainerRect;
     }
     
+    // Background.
+    CGRect backgroundRect = UIEdgeInsetsInsetRect(bounds, insets);
+    
+    _backgroundView.frame = backgroundRect;
+    
     // Rest of views.
+    _dragIndicatorView.frame = dragIndicatorRect;
     _titleLabel.frame = titleRect;
     _messageLabel.frame = messageRect;
     _contentView.frame = contentRect;
-    _backgroundView.frame = bounds;
+}
+
+- (void)setFrame:(CGRect)frame
+{
+    const BOOL backgroundNeedsLayout = !CGRectEqualToRect(frame, self.frame);
+    
+    [super setFrame:frame];
+    
+    if (backgroundNeedsLayout) {
+        [self setNeedsLayout];
+    }
 }
 
 - (CGRect)contentRectForBounds:(CGRect)bounds
@@ -364,13 +424,30 @@
     return imageRect;
 }
 
+- (CGRect)dragIndicatorRectForContentRect:(CGRect)contentRect
+{
+    CGSize indicatorSize = [_dragIndicatorView sizeThatFits:contentRect.size];
+    CGRect indicatorRect = (CGRect){
+        .origin.x = roundf((float)((CGRectGetWidth(contentRect) - indicatorSize.width) / 2.0f)),
+        .origin.y = CGRectGetMaxY(contentRect) - indicatorSize.height,
+        .size = indicatorSize
+    };
+    
+    return indicatorRect;
+}
+
 - (CGSize)sizeThatFits:(CGSize)size
 {
     CGRect proposedBounds = (CGRect){ .size = size };
     CGRect contentRect = [self contentRectForBounds:proposedBounds];
     CGRect actionsRect = [self actionsRectForContentRect:contentRect];
+    CGRect dragIndicatorRect = [self dragIndicatorRectForContentRect:contentRect];
     
     size.height = CGRectGetMinY(contentRect) + CGRectGetMaxY(actionsRect) + 10.0f;
+    
+    if (!CGRectIsEmpty(dragIndicatorRect)) {
+        size.height += CGRectGetHeight(dragIndicatorRect);
+    }
     
     return size;
 }
@@ -497,6 +574,116 @@
     [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction animations:^{
         self->_roundedBackgroundView.alpha = highlighted ? 0.8f : 1.0f;
     } completion:NULL];
+}
+
+@end
+
+@implementation _MMBannerNotificationDragView
+
++ (UIImage *)notificationDragIndicatorImage
+{
+    __weak static UIImage *_cachedImage;
+    UIImage *image = _cachedImage;
+    
+    if (!image) {
+        const CGSize size = { 36.0, 5.0f };
+        const CGFloat radius = 3.0f;
+        
+        UIColor *color = nil;
+        if ([UIVisualEffectView class]) {
+            color = [UIColor colorWithWhite:1.0f alpha:0.45f];
+        } else {
+            color = [UIColor colorWithWhite:1.0f alpha:0.25f];
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0); {
+            [color setFill];
+            
+            UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){ .size = size } cornerRadius:radius];
+            [bezierPath fill];
+            
+            image = UIGraphicsGetImageFromCurrentImageContext();
+        }; UIGraphicsEndImageContext();
+        
+        _cachedImage = image;
+    }
+    
+    return image;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.userInteractionEnabled = NO;
+        
+        // Container view.
+        UIVisualEffectView *containerView = nil;
+        if ([UIVisualEffectView class]) {
+            containerView = [[UIVisualEffectView alloc] initWithFrame:CGRectZero];
+        } else {
+            containerView = (id)[[UIView alloc] initWithFrame:CGRectZero];
+        }
+        containerView.userInteractionEnabled = NO;
+        
+        _backgroundContainerView = containerView;
+        
+        [self addSubview:containerView];
+        
+        // Indicator view.
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:[self.class notificationDragIndicatorImage]];
+        
+        _imageView = imageView;
+        
+        if ([UIVisualEffectView class]) {
+            [containerView.contentView addSubview:imageView];
+        } else {
+            [containerView addSubview:imageView];
+        }
+    }
+    return self;
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    CGSize imageSize = [_imageView sizeThatFits:size];
+    
+    size.width = imageSize.width;
+    size.height = imageSize.height + 10.0f;
+    
+    return size;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    CGRect bounds = (CGRect){
+        .size = self.bounds.size
+    };
+    
+    if (_backgroundContainerView) {
+        [self sendSubviewToBack:_backgroundContainerView];
+    }
+    
+    CGSize imageSize = [_imageView sizeThatFits:bounds.size];
+    CGRect imageRect = (CGRect){
+        .origin.x = CGRectGetMidX(bounds) - roundf((float)imageSize.width / 2.0f),
+        .origin.y = CGRectGetMidY(bounds) - roundf((float)imageSize.height / 2.0f),
+        .size = imageSize
+    };
+    
+    _imageView.frame = imageRect;
+    _backgroundContainerView.frame = bounds;
+}
+
+- (void)setBackgroundVisualEffect:(UIVisualEffect *)visualEffect
+{
+    if (![_backgroundVisualEffect isEqual:visualEffect]) {
+        _backgroundVisualEffect = visualEffect;
+        
+        _backgroundContainerView.effect = visualEffect;
+    }
 }
 
 @end
