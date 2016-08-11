@@ -175,6 +175,7 @@
 @property (strong, nonatomic) _MMLocalNotificationWindow *window;
 @property (strong, nonatomic) NSMutableArray *notificationStack;
 @property (strong, nonatomic) NSMutableArray *scheduledNotificationQueue;
+@property (strong, nonatomic) NSTimer *automaticDismissTimer;
 
 @property (strong, nonatomic) NSMutableDictionary *registeredViewClasses;
 
@@ -320,7 +321,9 @@
         ctx.localNotification = notification;
         ctx.notificationView = notificationView;
         
-        if (notification.actions.count == 0) {
+        const BOOL automaticDismissing = (notification.actions.count == 0);
+        
+        if (automaticDismissing) {
             UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_interactiveDismissPanGestureRecognized:)];
             
             ctx.interactiveDismissGestureRecognizer = gestureRecognizer;
@@ -332,6 +335,10 @@
         [controller setCurrentContext:ctx];
         
         [self.notificationStack removeObjectAtIndex:0];
+        
+        if (automaticDismissing) {
+            [self _scheduleAutomaticDismiss];
+        }
     } else {
         [controller setTopView:nil];
         [controller setCurrentContext:nil];
@@ -420,14 +427,46 @@
             
         } completion:^(BOOL finished) {
             if (isDismissing) {
-                _MMLocalNotificationWindow *window = (id)view.window;
-                _MMLocalNotificationViewController *hostingViewController = window.rootViewController;
-                _MMStockNotificationPresentationContext *context = hostingViewController.currentContext;
-                
-                [context dismissPresentationWithAction:nil];
+                [self _dismissPresentedNotification];
+            } else {
+                [self _scheduleAutomaticDismiss];
             }
         }];
     }
+    
+    [self _invalidateAutomaticDismiss];
+}
+
+- (void)_dismissPresentedNotification
+{
+    _MMLocalNotificationWindow *window = self.window;
+    _MMLocalNotificationViewController *hostingViewController = window.rootViewController;
+    _MMStockNotificationPresentationContext *context = hostingViewController.currentContext;
+    
+    [context dismissPresentationWithAction:nil];
+}
+
+#pragma mark - Automatic dismiss.
+
+- (void)_scheduleAutomaticDismiss
+{
+    [self _invalidateAutomaticDismiss];
+    
+    const NSTimeInterval delay = 4.0;
+    
+    _automaticDismissTimer = [NSTimer scheduledTimerWithTimeInterval:delay target:self selector:@selector(_automaticDismissTimerDidFire:) userInfo:nil repeats:NO];
+}
+
+- (void)_invalidateAutomaticDismiss
+{
+    [_automaticDismissTimer invalidate];
+    _automaticDismissTimer = nil;
+}
+
+- (void)_automaticDismissTimerDidFire:(NSTimer *)timer
+{
+    [self _invalidateAutomaticDismiss];
+    [self _dismissPresentedNotification];
 }
 
 @end
