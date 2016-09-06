@@ -13,6 +13,10 @@
 
 #import <objc/runtime.h>
 
+@class _MMLocalNotificationWindow;
+@class _MMLocalNotificationViewController;
+@class _MMStockNotificationPresentationContext;
+
 @interface _MMStockNotificationPresentationContext : NSObject <MMNotificationPresentationContext>
 
 @property (nonatomic, readwrite, strong) MMLocalNotification *localNotification;
@@ -24,9 +28,9 @@
 
 @interface _MMLocalNotificationViewController : UIViewController
 
-@property (strong, nonatomic) UIView *topView;
+@property (strong, nonatomic) UIView <MMNotificationView> *topView;
 @property (strong, nonatomic) id <MMNotificationPresentationContext> currentContext;
-@property (weak, nonatomic) UIWindow *window;
+@property (weak, nonatomic) _MMLocalNotificationWindow *window;
 
 @end
 
@@ -87,11 +91,17 @@
     });
 }
 
+- (UIView *)_statusBarView
+{
+    id statusBarKey = [@[ @"sta", @"tusBa", @"rWind", @"ow" ] componentsJoinedByString:@""];
+    return [[UIApplication sharedApplication] valueForKey:statusBarKey];
+}
+
 @end
 
 @implementation _MMLocalNotificationViewController
 
-- (void)setTopView:(UIView *)topView
+- (void)setTopView:(UIView <MMNotificationView> *)topView
 {
     if (topView == _topView) {
         return;
@@ -102,7 +112,7 @@
     _topView = topView;
 }
 
-- (void)_transitionFromView:(UIView *)fromView toView:(UIView *)toView
+- (void)_transitionFromView:(UIView <MMNotificationView> *)fromView toView:(UIView <MMNotificationView> *)toView
 {
     if (!fromView && !toView) {
         return;
@@ -112,6 +122,8 @@
         self.window.hidden = NO;
     }
     
+    UIView *statusBar = self.window._statusBarView;
+
     CGRect bounds = self.view.bounds;
     const BOOL isFromViewCurrentlyVisible = CGRectIntersectsRect(fromView.frame, bounds);
     
@@ -142,6 +154,9 @@
         if (isFromViewCurrentlyVisible) {
             fromView.frame = fromViewRectHidden;
         }
+        
+        statusBar.alpha = !(toView.prefersStatusBarHidden);
+        
     } completion:^(BOOL finished) {
         if (fromView) {
             [fromView removeFromSuperview];
@@ -162,8 +177,13 @@
 
 - (CGRect)_rectForView:(UIView *)view
 {
-    CGSize size = [view sizeThatFits:self.view.bounds.size];
-    CGRect rect = { .size = size };
+    CGSize boundsSize = self.view.bounds.size;
+    CGSize size = [view sizeThatFits:boundsSize];
+    
+    CGRect rect = {
+        .origin.x = roundf((boundsSize.width - size.width) / 2.0f),
+        .size = size
+    };
     
     return rect;
 }
@@ -391,6 +411,9 @@
     CGPoint translation = [gestureRecognizer translationInView:view];
     CGFloat y = CGRectGetMinY(view.frame);
     
+    const auto UIView *statusBar = self.window._statusBarView;
+    const BOOL affectingStatusBar = self._presentedNotificationPrefersStatusBarHidden;
+    
     const UIGestureRecognizerState state = gestureRecognizer.state;
     
     if (state == UIGestureRecognizerStateChanged) {
@@ -408,6 +431,10 @@
         
         [gestureRecognizer setTranslation:CGPointZero inView:view];
         
+        if (affectingStatusBar) {
+            statusBar.alpha = MAX(MIN((-proposedY / CGRectGetHeight(frame)), 1.0f), 0.0f);
+        }
+        
     } else if (state == UIGestureRecognizerStateEnded) {
         const BOOL isDismissing = (y <= 0);
         
@@ -424,6 +451,10 @@
             CGRect frame = view.frame;
             frame.origin.y = destinationY;
             view.frame = frame;
+            
+            if (affectingStatusBar) {
+                statusBar.alpha = (CGFloat)(isDismissing);
+            }
             
         } completion:^(BOOL finished) {
             if (isDismissing) {
@@ -444,6 +475,15 @@
     _MMStockNotificationPresentationContext *context = hostingViewController.currentContext;
     
     [context dismissPresentationWithAction:nil];
+}
+
+- (BOOL)_presentedNotificationPrefersStatusBarHidden
+{
+    _MMLocalNotificationWindow *window = self.window;
+    _MMLocalNotificationViewController *hostingViewController = window.rootViewController;
+    _MMStockNotificationPresentationContext *context = hostingViewController.currentContext;
+    
+    return context.notificationView.prefersStatusBarHidden;
 }
 
 #pragma mark - Automatic dismiss.

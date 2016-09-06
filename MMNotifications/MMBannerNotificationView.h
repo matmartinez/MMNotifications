@@ -24,6 +24,11 @@
  */
 - (void)awakeWithPresentationContext:(id <MMNotificationPresentationContext>)context;
 
+/**
+ *  If @c YES, the status bar will be hidden. If @c NO, the status bar will be displayed behind the notification.
+ */
+- (BOOL)prefersStatusBarHidden;
+
 @end
 
 /**
@@ -39,5 +44,6 @@
 - (CGRect)titleRectForContentRect:(CGRect)contentRect;
 - (CGRect)messageRectForContentRect:(CGRect)contentRect;
 - (CGRect)imageRectForContentRect:(CGRect)contentRect;
+- (CGRect)dragIndicatorRectForContentRect:(CGRect)contentRect;
 
 @end

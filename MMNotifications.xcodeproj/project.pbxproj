@@ -7,17 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		094811C51D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h in Headers */ = {isa = PBXBuildFile; fileRef = 094811C31D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h */; };
+		094811C61D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.m in Sources */ = {isa = PBXBuildFile; fileRef = 094811C41D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.m */; };
+		094811C91D7DC317003D31A2 /* MMBannerNotificationView_Rounded.h in Headers */ = {isa = PBXBuildFile; fileRef = 094811C71D7DC317003D31A2 /* MMBannerNotificationView_Rounded.h */; };
+		094811CA1D7DC317003D31A2 /* MMBannerNotificationView_Rounded.m in Sources */ = {isa = PBXBuildFile; fileRef = 094811C81D7DC317003D31A2 /* MMBannerNotificationView_Rounded.m */; };
+		094811CD1D7DC56F003D31A2 /* MMBannerDragableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 094811CB1D7DC56F003D31A2 /* MMBannerDragableView.h */; };
+		094811CE1D7DC56F003D31A2 /* MMBannerDragableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 094811CC1D7DC56F003D31A2 /* MMBannerDragableView.m */; };
+		094811D11D7DD26C003D31A2 /* MMBannerNotificationView_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 094811CF1D7DD26C003D31A2 /* MMBannerNotificationView_Private.h */; };
 		094EA76E1B990044004B8AA0 /* MMNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA76D1B990044004B8AA0 /* MMNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		094EA77C1B990061004B8AA0 /* MMBannerNotificationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7751B990061004B8AA0 /* MMBannerNotificationView.h */; settings = {ASSET_TAGS = (); }; };
-		094EA77D1B990061004B8AA0 /* MMBannerNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA7761B990061004B8AA0 /* MMBannerNotificationView.m */; settings = {ASSET_TAGS = (); }; };
-		094EA77E1B990061004B8AA0 /* MMLocalNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7771B990061004B8AA0 /* MMLocalNotification.h */; settings = {ASSET_TAGS = (); }; };
-		094EA77F1B990061004B8AA0 /* MMLocalNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA7781B990061004B8AA0 /* MMLocalNotification.m */; settings = {ASSET_TAGS = (); }; };
-		094EA7801B990061004B8AA0 /* MMNotificationPresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7791B990061004B8AA0 /* MMNotificationPresentationContext.h */; settings = {ASSET_TAGS = (); }; };
-		094EA7811B990061004B8AA0 /* MMNotificationPresentationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA77A1B990061004B8AA0 /* MMNotificationPresentationController.h */; settings = {ASSET_TAGS = (); }; };
-		094EA7821B990061004B8AA0 /* MMNotificationPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA77B1B990061004B8AA0 /* MMNotificationPresentationController.m */; settings = {ASSET_TAGS = (); }; };
+		094EA77C1B990061004B8AA0 /* MMBannerNotificationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7751B990061004B8AA0 /* MMBannerNotificationView.h */; };
+		094EA77D1B990061004B8AA0 /* MMBannerNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA7761B990061004B8AA0 /* MMBannerNotificationView.m */; };
+		094EA77E1B990061004B8AA0 /* MMLocalNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7771B990061004B8AA0 /* MMLocalNotification.h */; };
+		094EA77F1B990061004B8AA0 /* MMLocalNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA7781B990061004B8AA0 /* MMLocalNotification.m */; };
+		094EA7801B990061004B8AA0 /* MMNotificationPresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7791B990061004B8AA0 /* MMNotificationPresentationContext.h */; };
+		094EA7811B990061004B8AA0 /* MMNotificationPresentationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA77A1B990061004B8AA0 /* MMNotificationPresentationController.h */; };
+		094EA7821B990061004B8AA0 /* MMNotificationPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA77B1B990061004B8AA0 /* MMNotificationPresentationController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		094811C31D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerNotificationView_Wide.h; sourceTree = "<group>"; };
+		094811C41D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBannerNotificationView_Wide.m; sourceTree = "<group>"; };
+		094811C71D7DC317003D31A2 /* MMBannerNotificationView_Rounded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerNotificationView_Rounded.h; sourceTree = "<group>"; };
+		094811C81D7DC317003D31A2 /* MMBannerNotificationView_Rounded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBannerNotificationView_Rounded.m; sourceTree = "<group>"; };
+		094811CB1D7DC56F003D31A2 /* MMBannerDragableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerDragableView.h; sourceTree = "<group>"; };
+		094811CC1D7DC56F003D31A2 /* MMBannerDragableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBannerDragableView.m; sourceTree = "<group>"; };
+		094811CF1D7DD26C003D31A2 /* MMBannerNotificationView_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerNotificationView_Private.h; sourceTree = "<group>"; };
 		094EA76A1B990044004B8AA0 /* MMNotifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MMNotifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		094EA76D1B990044004B8AA0 /* MMNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMNotifications.h; sourceTree = "<group>"; };
 		094EA76F1B990044004B8AA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -41,6 +55,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		094811D31D7F0BAD003D31A2 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				094811CF1D7DD26C003D31A2 /* MMBannerNotificationView_Private.h */,
+				094811C31D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h */,
+				094811C41D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.m */,
+				094811C71D7DC317003D31A2 /* MMBannerNotificationView_Rounded.h */,
+				094811C81D7DC317003D31A2 /* MMBannerNotificationView_Rounded.m */,
+				094811CB1D7DC56F003D31A2 /* MMBannerDragableView.h */,
+				094811CC1D7DC56F003D31A2 /* MMBannerDragableView.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
 		094EA7601B990043004B8AA0 = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +88,7 @@
 		094EA76C1B990044004B8AA0 /* MMNotifications */ = {
 			isa = PBXGroup;
 			children = (
+				094811D31D7F0BAD003D31A2 /* Private */,
 				094EA76D1B990044004B8AA0 /* MMNotifications.h */,
 				094EA7751B990061004B8AA0 /* MMBannerNotificationView.h */,
 				094EA7761B990061004B8AA0 /* MMBannerNotificationView.m */,
@@ -81,10 +110,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				094EA77C1B990061004B8AA0 /* MMBannerNotificationView.h in Headers */,
+				094811CD1D7DC56F003D31A2 /* MMBannerDragableView.h in Headers */,
 				094EA7811B990061004B8AA0 /* MMNotificationPresentationController.h in Headers */,
+				094811D11D7DD26C003D31A2 /* MMBannerNotificationView_Private.h in Headers */,
 				094EA77E1B990061004B8AA0 /* MMLocalNotification.h in Headers */,
 				094EA76E1B990044004B8AA0 /* MMNotifications.h in Headers */,
+				094811C91D7DC317003D31A2 /* MMBannerNotificationView_Rounded.h in Headers */,
 				094EA7801B990061004B8AA0 /* MMNotificationPresentationContext.h in Headers */,
+				094811C51D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +188,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				094811C61D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.m in Sources */,
 				094EA77F1B990061004B8AA0 /* MMLocalNotification.m in Sources */,
+				094811CE1D7DC56F003D31A2 /* MMBannerDragableView.m in Sources */,
+				094811CA1D7DC317003D31A2 /* MMBannerNotificationView_Rounded.m in Sources */,
 				094EA77D1B990061004B8AA0 /* MMBannerNotificationView.m in Sources */,
 				094EA7821B990061004B8AA0 /* MMNotificationPresentationController.m in Sources */,
 			);
@@ -303,6 +339,7 @@
 				094EA7741B990044004B8AA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

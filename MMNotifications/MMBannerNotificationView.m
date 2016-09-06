@@ -10,10 +10,12 @@
 #import "MMLocalNotification.h"
 #import "MMNotificationPresentationContext.h"
 
+#import "Private/MMBannerNotificationView_Private.h"
+#import "Private/MMBannerNotificationView_Wide.h"
+#import "Private/MMBannerNotificationView_Rounded.h"
+#import "Private/MMBannerDragableView.h"
+
 @interface MMBannerNotificationView () {
-    UIView *_backgroundView;
-    BOOL _attachesTopBackground;
-    
     UIView *_contentView;
     NSArray *_contentContainerViews;
     
@@ -41,16 +43,22 @@
 
 @end
 
-@interface _MMBannerNotificationDragView : UIView {
-    UIVisualEffectView *_backgroundContainerView;
-    UIImageView *_imageView;
-}
-
-@property (strong, nonatomic) UIVisualEffect *backgroundVisualEffect;
-
-@end
-
 @implementation MMBannerNotificationView
+
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) \
+([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
++ (instancetype)alloc
+{
+    if ([MMBannerNotificationView class] == self) {
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
+            return [MMBannerNotificationView_Rounded alloc];
+        } else {
+            return [MMBannerNotificationView_Wide alloc];
+        }
+    }
+    return [super alloc];
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -61,6 +69,11 @@
         _buttonTextFont = [UIFont systemFontOfSize:15.0f];
     }
     return self;
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    return NO;
 }
 
 - (void)awakeWithPresentationContext:(id<MMNotificationPresentationContext>)context
@@ -75,34 +88,21 @@
 {
     MMLocalNotification *notification = context.localNotification;
     
-    // Create views.
-    const BOOL visualEffectsSupported = [UIVisualEffectView class] != nil;
-    
-    // Background view.
-    UIView *backgrondView = nil;
-    if (visualEffectsSupported) {
-        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        
-        backgrondView = effectView;
-    } else {
-        UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectZero];
-        navigationBar.barStyle = UIBarStyleBlack;
-        navigationBar.clipsToBounds = YES;
-        
-        backgrondView = navigationBar;
-    }
-    
-    _backgroundView = backgrondView;
-    
-    [self addSubview:backgrondView];
-    
     // Content view.
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     
     [self addSubview:contentView];
     
     _contentView = contentView;
+    
+    const BOOL visualEffectsSupported = [UIVisualEffectView class] != nil;
+    UIBlurEffect *backgroundBlurEffect = nil;
+    if (visualEffectsSupported) {
+        UIVisualEffect *backgroundEffect = [self _backgroundVisualEffectForContentView:contentView];
+        if ([backgroundEffect isKindOfClass:[UIBlurEffect class]]) {
+            backgroundBlurEffect = (id)backgroundEffect;
+        }
+    }
     
     // Setup containers.
     NSMutableArray *contentContainers = [NSMutableArray array];
@@ -113,7 +113,7 @@
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     titleLabel.text = notification.title;
     titleLabel.font = _titleTextFont;
-    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.textColor = [self _titleTextColor];
     titleLabel.numberOfLines = 0;
     
     _titleLabel = titleLabel;
@@ -124,13 +124,13 @@
     UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     messageLabel.text = notification.message;
     messageLabel.font = _messageTextFont;
-    messageLabel.textColor = [UIColor whiteColor];
+    messageLabel.textColor = [self _messageTextColor];
     messageLabel.numberOfLines = 0;
     
     _messageLabel = messageLabel;
     
-    if (visualEffectsSupported) {
-        UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)[(id)backgrondView effect]];
+    if (visualEffectsSupported && backgroundBlurEffect) {
+        UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:backgroundBlurEffect];
         UIVisualEffectView *messageContainer = [[UIVisualEffectView alloc] initWithEffect:vibrancyEffect];
         
         [contentContainers addObject:messageContainer];
@@ -158,8 +158,8 @@
     for (MMNotificationAction *action in notification.actions) {
         _MMBannerNotificationButton *button = [_MMBannerNotificationButton buttonWithType:UIButtonTypeSystem];
         
-        if (visualEffectsSupported) {
-            UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)[(id)backgrondView effect]];
+        if (visualEffectsSupported && backgroundBlurEffect) {
+            UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:backgroundBlurEffect];
             
             button.backgroundVisualEffect = vibrancyEffect;
         }
@@ -182,10 +182,10 @@
     // Drag indicator.
     UIGestureRecognizer *dismissGestureRecognizer = context.interactiveDismissGestureRecognizer;
     if (dismissGestureRecognizer) {
-        _MMBannerNotificationDragView *dragView = [[_MMBannerNotificationDragView alloc] initWithFrame:CGRectZero];
+        MMBannerDragableView *dragView = [[MMBannerDragableView alloc] initWithFrame:CGRectZero];
         
-        if (visualEffectsSupported) {
-            UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)[(id)backgrondView effect]];
+        if (visualEffectsSupported && backgroundBlurEffect) {
+            UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:backgroundBlurEffect];
             
             dragView.backgroundVisualEffect = vibrancyEffect;
         }
@@ -288,32 +288,12 @@
         }
     }
     
-    // Insets.
-    CGRect statusBarRect = [self convertRect:[UIApplication sharedApplication].statusBarFrame fromView:nil];
-    
-    CGFloat attachedLength = -MIN(CGRectGetMinY(statusBarRect), 0);
-    
-    if (_attachesTopBackground || attachedLength > 0) {
-        _attachesTopBackground = YES;
-        
-        attachedLength = CGRectGetHeight(self.window.screen.bounds);
-    }
-    
-    UIEdgeInsets insets = (UIEdgeInsets){
-        .top = -attachedLength,
-    };
-    
     // Content containers.
     CGRect contentContainerRect = contentRect;
     contentContainerRect.origin = CGPointZero;
     for (UIView *view in _contentContainerViews) {
         view.frame = contentContainerRect;
     }
-    
-    // Background.
-    CGRect backgroundRect = UIEdgeInsetsInsetRect(bounds, insets);
-    
-    _backgroundView.frame = backgroundRect;
     
     // Rest of views.
     _dragIndicatorView.frame = dragIndicatorRect;
@@ -322,20 +302,9 @@
     _contentView.frame = contentRect;
 }
 
-- (void)setFrame:(CGRect)frame
-{
-    const BOOL backgroundNeedsLayout = !CGRectEqualToRect(frame, self.frame);
-    
-    [super setFrame:frame];
-    
-    if (backgroundNeedsLayout) {
-        [self setNeedsLayout];
-    }
-}
-
 - (CGRect)contentRectForBounds:(CGRect)bounds
 {
-    const CGFloat maximumWidth = 465.0f;
+    const CGFloat maximumWidth = [self _preferredMaximumContentSize].width;
     
     CGRect rect = bounds;
     rect.origin = CGPointZero;
@@ -345,7 +314,7 @@
         rect.origin.x = roundf((float)((CGRectGetWidth(bounds) - maximumWidth) / 2.0f));
     }
     
-    return CGRectInset(rect, 15.0f, 10.0f);
+    return UIEdgeInsetsInsetRect(rect, [self _contentInsets]);
 }
 
 - (CGRect)textRectForContentRect:(CGRect)contentRect
@@ -443,13 +412,40 @@
     CGRect actionsRect = [self actionsRectForContentRect:contentRect];
     CGRect dragIndicatorRect = [self dragIndicatorRectForContentRect:contentRect];
     
-    size.height = CGRectGetMinY(contentRect) + CGRectGetMaxY(actionsRect) + 10.0f;
+    size.height = CGRectGetMinY(contentRect) + CGRectGetMaxY(actionsRect) + [self _contentInsets].bottom;
     
     if (!CGRectIsEmpty(dragIndicatorRect)) {
         size.height += CGRectGetHeight(dragIndicatorRect);
     }
     
     return size;
+}
+
+#pragma mark - Private.
+
+- (UIEdgeInsets)_contentInsets
+{
+    return (UIEdgeInsets){ 15.0f, 10.0f, 15.0f, 10.0f };
+}
+
+- (CGSize)_preferredMaximumContentSize
+{
+    return (CGSize){ 465.0f, CGFLOAT_MAX };
+}
+
+- (UIVisualEffect *)_backgroundVisualEffectForContentView:(UIView *)contentView
+{
+    return nil;
+}
+
+- (UIColor *)_messageTextColor
+{
+    return nil;
+}
+
+- (UIColor *)_titleTextColor
+{
+    return nil;
 }
 
 @end
@@ -574,116 +570,6 @@
     [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction animations:^{
         self->_roundedBackgroundView.alpha = highlighted ? 0.8f : 1.0f;
     } completion:NULL];
-}
-
-@end
-
-@implementation _MMBannerNotificationDragView
-
-+ (UIImage *)notificationDragIndicatorImage
-{
-    __weak static UIImage *_cachedImage;
-    UIImage *image = _cachedImage;
-    
-    if (!image) {
-        const CGSize size = { 36.0, 5.0f };
-        const CGFloat radius = 3.0f;
-        
-        UIColor *color = nil;
-        if ([UIVisualEffectView class]) {
-            color = [UIColor colorWithWhite:1.0f alpha:0.45f];
-        } else {
-            color = [UIColor colorWithWhite:1.0f alpha:0.25f];
-        }
-        
-        UIGraphicsBeginImageContextWithOptions(size, NO, 0); {
-            [color setFill];
-            
-            UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:(CGRect){ .size = size } cornerRadius:radius];
-            [bezierPath fill];
-            
-            image = UIGraphicsGetImageFromCurrentImageContext();
-        }; UIGraphicsEndImageContext();
-        
-        _cachedImage = image;
-    }
-    
-    return image;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.userInteractionEnabled = NO;
-        
-        // Container view.
-        UIVisualEffectView *containerView = nil;
-        if ([UIVisualEffectView class]) {
-            containerView = [[UIVisualEffectView alloc] initWithFrame:CGRectZero];
-        } else {
-            containerView = (id)[[UIView alloc] initWithFrame:CGRectZero];
-        }
-        containerView.userInteractionEnabled = NO;
-        
-        _backgroundContainerView = containerView;
-        
-        [self addSubview:containerView];
-        
-        // Indicator view.
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:[self.class notificationDragIndicatorImage]];
-        
-        _imageView = imageView;
-        
-        if ([UIVisualEffectView class]) {
-            [containerView.contentView addSubview:imageView];
-        } else {
-            [containerView addSubview:imageView];
-        }
-    }
-    return self;
-}
-
-- (CGSize)sizeThatFits:(CGSize)size
-{
-    CGSize imageSize = [_imageView sizeThatFits:size];
-    
-    size.width = imageSize.width;
-    size.height = imageSize.height + 10.0f;
-    
-    return size;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    CGRect bounds = (CGRect){
-        .size = self.bounds.size
-    };
-    
-    if (_backgroundContainerView) {
-        [self sendSubviewToBack:_backgroundContainerView];
-    }
-    
-    CGSize imageSize = [_imageView sizeThatFits:bounds.size];
-    CGRect imageRect = (CGRect){
-        .origin.x = CGRectGetMidX(bounds) - roundf((float)imageSize.width / 2.0f),
-        .origin.y = CGRectGetMidY(bounds) - roundf((float)imageSize.height / 2.0f),
-        .size = imageSize
-    };
-    
-    _imageView.frame = imageRect;
-    _backgroundContainerView.frame = bounds;
-}
-
-- (void)setBackgroundVisualEffect:(UIVisualEffect *)visualEffect
-{
-    if (![_backgroundVisualEffect isEqual:visualEffect]) {
-        _backgroundVisualEffect = visualEffect;
-        
-        _backgroundContainerView.effect = visualEffect;
-    }
 }
 
 @end
