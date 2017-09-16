@@ -155,7 +155,10 @@
             fromView.frame = fromViewRectHidden;
         }
         
-        statusBar.alpha = !(toView.prefersStatusBarHidden);
+        const BOOL isInsetFromTop = (toViewRect.origin.y > 0.0f);
+        const BOOL hidesStatusBar = toView.prefersStatusBarHidden && !isInsetFromTop;
+        
+        statusBar.alpha = !(hidesStatusBar);
         
     } completion:^(BOOL finished) {
         if (fromView) {
@@ -180,12 +183,25 @@
     CGSize boundsSize = self.view.bounds.size;
     CGSize size = [view sizeThatFits:boundsSize];
     
+    CGFloat margin = self.deviceInsets.top;
+    
     CGRect rect = {
         .origin.x = roundf((boundsSize.width - size.width) / 2.0f),
+        .origin.y = margin,
         .size = size
     };
     
     return rect;
+}
+
+- (UIEdgeInsets)deviceInsets
+{
+    NSString *peripheryInsetsString = [@[ @"_devic", @"ePeriphe", @"ryInsets" ] componentsJoinedByString:@""];
+    if ([self respondsToSelector:NSSelectorFromString(peripheryInsetsString)]) {
+        NSValue *value = [self valueForKeyPath:peripheryInsetsString];
+        return value.UIEdgeInsetsValue;
+    }
+    return UIEdgeInsetsZero;
 }
 
 @end
@@ -412,7 +428,10 @@
     CGFloat y = CGRectGetMinY(view.frame);
     
     const auto UIView *statusBar = self.window._statusBarView;
-    const BOOL affectingStatusBar = self._presentedNotificationPrefersStatusBarHidden;
+    const CGRect rectForView = [self.window.rootViewController _rectForView:view];
+    const BOOL isInsetFromTop = (rectForView.origin.y > 0.0f);
+    
+    const BOOL affectingStatusBar = self._presentedNotificationPrefersStatusBarHidden && !isInsetFromTop;
     
     const UIGestureRecognizerState state = gestureRecognizer.state;
     
@@ -420,7 +439,7 @@
         CGFloat proposedY = y + translation.y;
         
         const CGFloat dragCoefficient = 0.055;
-        const BOOL bounces = (proposedY > 0);
+        const BOOL bounces = (proposedY > CGRectGetMinY(rectForView));
         if (bounces) {
             proposedY = y + (dragCoefficient * translation.y);
         }
@@ -436,9 +455,9 @@
         }
         
     } else if (state == UIGestureRecognizerStateEnded) {
-        const BOOL isDismissing = (y <= 0);
+        const BOOL isDismissing = (y <= CGRectGetMinY(rectForView));
         
-        CGFloat destinationY = isDismissing ? -CGRectGetHeight(view.frame) : 0.0f;
+        CGFloat destinationY = isDismissing ? -(CGRectGetHeight(rectForView)) : CGRectGetMinY(rectForView);
         
         CGFloat distance = y - destinationY;
         CGFloat animationDuration = 1.0f;
