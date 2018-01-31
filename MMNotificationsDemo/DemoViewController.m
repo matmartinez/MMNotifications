@@ -135,7 +135,7 @@ static NSString *DemoCellReuseIdentifier = @"DemoCellReuseIdentifier";
     const CGFloat preferredItemDimension = 136.0f;
     const CGFloat interSpacing = 8.0f;
     const CGFloat padding = 16.0f;
-    const CGFloat leadingForDemo = 44.0f;
+    const CGFloat leadingForDemo = 36.0f;
     
     const NSUInteger itemsPerLine = floor(CGRectGetWidth(bounds) / preferredItemDimension);
     const CGFloat itemDimension = floor((CGRectGetWidth(bounds) - (padding * 2.0f) - ((itemsPerLine - 1) * interSpacing)) / itemsPerLine);

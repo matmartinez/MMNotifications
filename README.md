@@ -70,7 +70,7 @@ You can create a custom notification view. Much like an `UICollectionView`, you 
 Class notificationViewClass = [MyCustomNotificationView class];
 
 // Set a category to identify notifications that will use your custom class:
-NSString *category = @“MyCategory”;
+NSString *category = @"MyCategory";
 
 // Register your class with the presentation controller:
 MMNotificationPresentationController *controller = [MMNotificationPresentationController sharedPresentationController];
