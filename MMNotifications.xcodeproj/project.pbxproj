@@ -22,7 +22,26 @@
 		094EA7801B990061004B8AA0 /* MMNotificationPresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA7791B990061004B8AA0 /* MMNotificationPresentationContext.h */; };
 		094EA7811B990061004B8AA0 /* MMNotificationPresentationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 094EA77A1B990061004B8AA0 /* MMNotificationPresentationController.h */; };
 		094EA7821B990061004B8AA0 /* MMNotificationPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EA77B1B990061004B8AA0 /* MMNotificationPresentationController.m */; };
+		09858BB02020F929008B5387 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BAF2020F929008B5387 /* AppDelegate.m */; };
+		09858BB32020F929008B5387 /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BB22020F929008B5387 /* DemoViewController.m */; };
+		09858BB82020F929008B5387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09858BB72020F929008B5387 /* Assets.xcassets */; };
+		09858BBB2020F929008B5387 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09858BB92020F929008B5387 /* LaunchScreen.storyboard */; };
+		09858BBE2020F929008B5387 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BBD2020F929008B5387 /* main.m */; };
+		09858BC72020FC0F008B5387 /* DemoControllerAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BC62020FC0F008B5387 /* DemoControllerAction.m */; };
+		09858BCA202207C3008B5387 /* DemoActionCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BC9202207C3008B5387 /* DemoActionCollectionViewCell.m */; };
+		09858BCE20221167008B5387 /* MMNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EA76A1B990044004B8AA0 /* MMNotifications.framework */; };
+		09858BD1202218F5008B5387 /* DemoCustomNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BD0202218F5008B5387 /* DemoCustomNotificationView.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		09858BCB2022110C008B5387 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 094EA7611B990043004B8AA0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 094EA7691B990044004B8AA0;
+			remoteInfo = MMNotifications;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		094811C31D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerNotificationView_Wide.h; sourceTree = "<group>"; };
@@ -42,6 +61,21 @@
 		094EA7791B990061004B8AA0 /* MMNotificationPresentationContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMNotificationPresentationContext.h; sourceTree = "<group>"; };
 		094EA77A1B990061004B8AA0 /* MMNotificationPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMNotificationPresentationController.h; sourceTree = "<group>"; };
 		094EA77B1B990061004B8AA0 /* MMNotificationPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMNotificationPresentationController.m; sourceTree = "<group>"; };
+		09858BAC2020F929008B5387 /* MMNotificationsDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMNotificationsDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		09858BAE2020F929008B5387 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		09858BAF2020F929008B5387 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		09858BB12020F929008B5387 /* DemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
+		09858BB22020F929008B5387 /* DemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoViewController.m; sourceTree = "<group>"; };
+		09858BB72020F929008B5387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		09858BBA2020F929008B5387 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		09858BBC2020F929008B5387 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09858BBD2020F929008B5387 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		09858BC52020FC0F008B5387 /* DemoControllerAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoControllerAction.h; sourceTree = "<group>"; };
+		09858BC62020FC0F008B5387 /* DemoControllerAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoControllerAction.m; sourceTree = "<group>"; };
+		09858BC8202207C3008B5387 /* DemoActionCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoActionCollectionViewCell.h; sourceTree = "<group>"; };
+		09858BC9202207C3008B5387 /* DemoActionCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoActionCollectionViewCell.m; sourceTree = "<group>"; };
+		09858BCF202218F5008B5387 /* DemoCustomNotificationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoCustomNotificationView.h; sourceTree = "<group>"; };
+		09858BD0202218F5008B5387 /* DemoCustomNotificationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoCustomNotificationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +83,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		09858BA92020F929008B5387 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09858BCE20221167008B5387 /* MMNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,7 +115,9 @@
 			isa = PBXGroup;
 			children = (
 				094EA76C1B990044004B8AA0 /* MMNotifications */,
+				09858BAD2020F929008B5387 /* MMNotificationsDemo */,
 				094EA76B1B990044004B8AA0 /* Products */,
+				09858BCD20221167008B5387 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				094EA76A1B990044004B8AA0 /* MMNotifications.framework */,
+				09858BAC2020F929008B5387 /* MMNotificationsDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +145,34 @@
 				094EA76F1B990044004B8AA0 /* Info.plist */,
 			);
 			path = MMNotifications;
+			sourceTree = "<group>";
+		};
+		09858BAD2020F929008B5387 /* MMNotificationsDemo */ = {
+			isa = PBXGroup;
+			children = (
+				09858BAE2020F929008B5387 /* AppDelegate.h */,
+				09858BAF2020F929008B5387 /* AppDelegate.m */,
+				09858BB12020F929008B5387 /* DemoViewController.h */,
+				09858BB22020F929008B5387 /* DemoViewController.m */,
+				09858BC8202207C3008B5387 /* DemoActionCollectionViewCell.h */,
+				09858BC9202207C3008B5387 /* DemoActionCollectionViewCell.m */,
+				09858BCF202218F5008B5387 /* DemoCustomNotificationView.h */,
+				09858BD0202218F5008B5387 /* DemoCustomNotificationView.m */,
+				09858BC52020FC0F008B5387 /* DemoControllerAction.h */,
+				09858BC62020FC0F008B5387 /* DemoControllerAction.m */,
+				09858BB72020F929008B5387 /* Assets.xcassets */,
+				09858BB92020F929008B5387 /* LaunchScreen.storyboard */,
+				09858BBC2020F929008B5387 /* Info.plist */,
+				09858BBD2020F929008B5387 /* main.m */,
+			);
+			path = MMNotificationsDemo;
+			sourceTree = "<group>";
+		};
+		09858BCD20221167008B5387 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,6 +215,24 @@
 			productReference = 094EA76A1B990044004B8AA0 /* MMNotifications.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		09858BAB2020F929008B5387 /* MMNotificationsDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 09858BC12020F929008B5387 /* Build configuration list for PBXNativeTarget "MMNotificationsDemo" */;
+			buildPhases = (
+				09858BA82020F929008B5387 /* Sources */,
+				09858BA92020F929008B5387 /* Frameworks */,
+				09858BAA2020F929008B5387 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				09858BCC2022110C008B5387 /* PBXTargetDependency */,
+			);
+			name = MMNotificationsDemo;
+			productName = MMNotificationsDemo;
+			productReference = 09858BAC2020F929008B5387 /* MMNotificationsDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -154,6 +245,10 @@
 					094EA7691B990044004B8AA0 = {
 						CreatedOnToolsVersion = 7.0;
 					};
+					09858BAB2020F929008B5387 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 094EA7641B990043004B8AA0 /* Build configuration list for PBXProject "MMNotifications" */;
@@ -162,6 +257,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 094EA7601B990043004B8AA0;
 			productRefGroup = 094EA76B1B990044004B8AA0 /* Products */;
@@ -169,6 +265,7 @@
 			projectRoot = "";
 			targets = (
 				094EA7691B990044004B8AA0 /* MMNotifications */,
+				09858BAB2020F929008B5387 /* MMNotificationsDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -178,6 +275,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		09858BAA2020F929008B5387 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09858BBB2020F929008B5387 /* LaunchScreen.storyboard in Resources */,
+				09858BB82020F929008B5387 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +303,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		09858BA82020F929008B5387 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09858BC72020FC0F008B5387 /* DemoControllerAction.m in Sources */,
+				09858BD1202218F5008B5387 /* DemoCustomNotificationView.m in Sources */,
+				09858BCA202207C3008B5387 /* DemoActionCollectionViewCell.m in Sources */,
+				09858BB32020F929008B5387 /* DemoViewController.m in Sources */,
+				09858BBE2020F929008B5387 /* main.m in Sources */,
+				09858BB02020F929008B5387 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		09858BCC2022110C008B5387 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 094EA7691B990044004B8AA0 /* MMNotifications */;
+			targetProxy = 09858BCB2022110C008B5387 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		09858BB92020F929008B5387 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				09858BBA2020F929008B5387 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		094EA7701B990044004B8AA0 /* Debug */ = {
@@ -320,6 +458,64 @@
 			};
 			name = Release;
 		};
+		09858BBF2020F929008B5387 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = MMNotificationsDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ma.matias.MMNotificationsDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		09858BC02020F929008B5387 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = MMNotificationsDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ma.matias.MMNotificationsDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -337,6 +533,15 @@
 			buildConfigurations = (
 				094EA7731B990044004B8AA0 /* Debug */,
 				094EA7741B990044004B8AA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		09858BC12020F929008B5387 /* Build configuration list for PBXNativeTarget "MMNotificationsDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09858BBF2020F929008B5387 /* Debug */,
+				09858BC02020F929008B5387 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
