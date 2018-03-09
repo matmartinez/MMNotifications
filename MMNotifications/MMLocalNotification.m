@@ -21,8 +21,6 @@
 
 + (instancetype)actionWithTitle:(NSString *)title style:(MMNotificationActionStyle)style handler:(void (^)(MMNotificationAction *))handler
 {
-    NSParameterAssert(title);
-    
     MMNotificationAction *action = [[self alloc] init];
     action.title = title;
     action.block = handler;
@@ -95,6 +93,7 @@
     notification.image = self.image;
     notification.actions = self.actions.mutableCopy;
     notification.category = [self.category copyWithZone:zone];
+    notification.selectionAction = [self.selectionAction copyWithZone:zone];
     
     return notification;
 }

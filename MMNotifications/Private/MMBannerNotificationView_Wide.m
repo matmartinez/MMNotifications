@@ -37,6 +37,8 @@
         backgrondView = navigationBar;
     }
     
+    backgrondView.userInteractionEnabled = NO;
+    
     _backgroundView = backgrondView;
     
     [self addSubview:backgrondView];

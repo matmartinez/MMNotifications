@@ -40,6 +40,7 @@
 {
     UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    effectView.userInteractionEnabled = NO;
     
     _backgroundView = effectView;
     

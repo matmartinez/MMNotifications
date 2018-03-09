@@ -15,9 +15,10 @@
 #import "Private/MMBannerNotificationView_Rounded.h"
 #import "Private/MMBannerDragableView.h"
 
-@interface MMBannerNotificationView () {
+@interface MMBannerNotificationView () <UIGestureRecognizerDelegate> {
     UIView *_contentView;
     NSArray *_contentContainerViews;
+    UITapGestureRecognizer *_tapGestureRecognizer;
     
     UILabel *_titleLabel;
     UILabel *_messageLabel;
@@ -115,6 +116,7 @@
     titleLabel.font = _titleTextFont;
     titleLabel.textColor = [self _titleTextColor];
     titleLabel.numberOfLines = 0;
+    titleLabel.userInteractionEnabled = NO;
     
     _titleLabel = titleLabel;
     
@@ -126,12 +128,14 @@
     messageLabel.font = _messageTextFont;
     messageLabel.textColor = [self _messageTextColor];
     messageLabel.numberOfLines = 0;
+    messageLabel.userInteractionEnabled = NO;
     
     _messageLabel = messageLabel;
     
     if (visualEffectsSupported && backgroundBlurEffect) {
         UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:backgroundBlurEffect];
         UIVisualEffectView *messageContainer = [[UIVisualEffectView alloc] initWithEffect:vibrancyEffect];
+        messageContainer.userInteractionEnabled = NO;
         
         [contentContainers addObject:messageContainer];
         
@@ -196,6 +200,26 @@
         
         [self addGestureRecognizer:dismissGestureRecognizer];
     }
+    
+    // Selection gesture.
+    if (context.localNotification.selectionAction) {
+        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tapGestureStateChanged:)];
+        tapGestureRecognizer.delegate = self;
+        
+        _tapGestureRecognizer = tapGestureRecognizer;
+        
+        [self addGestureRecognizer:tapGestureRecognizer];
+    }
+}
+
+#pragma mark - <UIGestureRecognizerDelegate>
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (gestureRecognizer == _tapGestureRecognizer) {
+        return (![_buttons containsObject:touch.view]);
+    }
+    return YES;
 }
 
 #pragma mark - Appearance.
@@ -248,6 +272,15 @@
     MMNotificationAction *action = self.notification.actions[idx];
     
     [self.context dismissPresentationWithAction:action];
+}
+
+- (void)_tapGestureStateChanged:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer.state == UIGestureRecognizerStateRecognized) {
+        MMNotificationAction *action = self.notification.selectionAction;
+        
+        [self.context dismissPresentationWithAction:action];
+    }
 }
 
 #pragma mark - Layout.

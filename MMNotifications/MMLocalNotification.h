@@ -48,6 +48,11 @@
 @property (readonly, nonatomic) NSArray <MMNotificationAction *> *actions;
 
 /**
+ *  The user action to trigger when the user selects the notification.
+ */
+@property (copy, nonatomic) MMNotificationAction *selectionAction;
+
+/**
  *  A category to identify this notification.
  */
 @property (copy, nonatomic) NSString *category;
