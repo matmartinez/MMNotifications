@@ -61,7 +61,7 @@
 
 @interface MMLocalNotification ()
 
-@property (readwrite, strong, nonatomic) NSMutableArray <MMNotificationAction *> *actions;
+@property (strong, nonatomic) NSMutableArray <MMNotificationAction *> *actionsStorage;
 
 @end
 
@@ -71,7 +71,7 @@
 {
     self = [super init];
     if (self) {
-        self.actions = [NSMutableArray array];
+        self.actionsStorage = [NSMutableArray array];
     }
     return self;
 }
@@ -81,7 +81,12 @@
     NSParameterAssert(action);
     NSAssert([action isKindOfClass:[MMNotificationAction class]], @"*** error: Expected object of class MMNotificationAction");
     
-    [(NSMutableArray *)self.actions addObject:action];
+    [self.actionsStorage addObject:action];
+}
+
+- (NSArray<MMNotificationAction *> *)actions
+{
+    return self.actionsStorage.copy;
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -91,7 +96,7 @@
     notification.message = [self.message copyWithZone:zone];
     notification.fireDate = [self.fireDate copyWithZone:zone];
     notification.image = self.image;
-    notification.actions = self.actions.mutableCopy;
+    notification.actionsStorage = [self.actionsStorage mutableCopyWithZone:zone];
     notification.category = [self.category copyWithZone:zone];
     notification.selectionAction = [self.selectionAction copyWithZone:zone];
     

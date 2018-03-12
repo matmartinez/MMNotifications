@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol MMNotificationPresentationContext;
 
 /**
@@ -36,9 +38,9 @@
  */
 @interface MMBannerNotificationView : UIView <MMNotificationView>
 
-@property (strong, nonatomic) UIFont *titleTextFont UI_APPEARANCE_SELECTOR;
-@property (strong, nonatomic) UIFont *messageTextFont UI_APPEARANCE_SELECTOR;
-@property (strong, nonatomic) UIFont *buttonTextFont UI_APPEARANCE_SELECTOR;
+@property (strong, nonatomic, null_resettable) UIFont *titleTextFont UI_APPEARANCE_SELECTOR;
+@property (strong, nonatomic, null_resettable) UIFont *messageTextFont UI_APPEARANCE_SELECTOR;
+@property (strong, nonatomic, null_resettable) UIFont *buttonTextFont UI_APPEARANCE_SELECTOR;
 
 - (CGRect)contentRectForBounds:(CGRect)bounds;
 - (CGRect)titleRectForContentRect:(CGRect)contentRect;
@@ -47,3 +49,5 @@
 - (CGRect)dragIndicatorRectForContentRect:(CGRect)contentRect;
 
 @end
+
+NS_ASSUME_NONNULL_END

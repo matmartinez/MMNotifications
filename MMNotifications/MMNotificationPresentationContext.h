@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MMNotificationPresentationController;
 @class MMNotificationAction;
 @class MMLocalNotification;
@@ -20,11 +22,11 @@
 /**
  *  Dismisses the presentation selecting the specified action.
  *
- *  @discussion This method should be called when the user taps the button corresponding to an action in your notification interface. The presentation controller will dismiss the presented notification and execute the action.
+ *  @discussion This method should be called when the user taps the button corresponding to an action in your notification interface. The presentation controller will dismiss the presented notification and execute the action, if any.
  *
- *  @param action The action that is being acted upon.
+ *  @param action The action that is being acted upon, if any.
  */
-- (void)dismissPresentationWithAction:(MMNotificationAction *)action;
+- (void)dismissPresentationWithAction:(nullable MMNotificationAction *)action;
 
 /**
  *  The local notification object that is being presented.
@@ -42,3 +44,5 @@
 @property (readonly, nonatomic) UIGestureRecognizer *interactiveDismissGestureRecognizer;
 
 @end
+
+NS_ASSUME_NONNULL_END

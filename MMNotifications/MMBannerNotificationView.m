@@ -65,9 +65,9 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _titleTextFont = [UIFont boldSystemFontOfSize:15.0f];
-        _messageTextFont = [UIFont systemFontOfSize:14.0f];
-        _buttonTextFont = [UIFont systemFontOfSize:15.0f];
+        self.titleTextFont = nil;
+        self.messageTextFont = nil;
+        self.buttonTextFont = nil;
     }
     return self;
 }
@@ -226,6 +226,10 @@
 
 - (void)setTitleTextFont:(UIFont *)titleTextFont
 {
+    if (!titleTextFont) {
+        titleTextFont = [UIFont boldSystemFontOfSize:15.0f];
+    }
+    
     if (_titleTextFont != titleTextFont) {
         _titleTextFont = titleTextFont;
         
@@ -235,6 +239,10 @@
 
 - (void)setMessageTextFont:(UIFont *)messageTextFont
 {
+    if (!messageTextFont) {
+        messageTextFont = [UIFont systemFontOfSize:14.0f];
+    }
+    
     if (_messageTextFont != messageTextFont) {
         _messageTextFont = messageTextFont;
         
@@ -244,6 +252,10 @@
 
 - (void)setButtonTextFont:(UIFont *)buttonTextFont
 {
+    if (!buttonTextFont) {
+        buttonTextFont = [UIFont systemFontOfSize:15.0f];
+    }
+    
     if (_buttonTextFont != buttonTextFont) {
         _buttonTextFont = buttonTextFont;
         

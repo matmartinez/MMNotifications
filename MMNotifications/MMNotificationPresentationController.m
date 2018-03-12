@@ -261,9 +261,7 @@
 
 - (void)cancelLocalNotification:(MMLocalNotification *)notification
 {
-    if (!notification) {
-        return;
-    }
+    NSParameterAssert(notification);
     
     if ([self.scheduledNotificationQueue containsObject:notification]) {
         [self.scheduledNotificationQueue removeObject:notification];
@@ -282,9 +280,7 @@
 
 - (void)scheduleLocalNotification:(MMLocalNotification *)notification
 {
-    if (!notification) {
-        return;
-    }
+    NSParameterAssert(notification);
     
     NSDate *fireDate = notification.fireDate;
     
@@ -313,9 +309,7 @@
 
 - (void)presentLocalNotificationNow:(MMLocalNotification *)notification
 {
-    if (!notification) {
-        return;
-    }
+    NSParameterAssert(notification);
     
     [self _pushNotification:[notification copy]];
 }

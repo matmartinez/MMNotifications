@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MMNotificationAction;
 
 /**
@@ -18,22 +20,22 @@
 /**
  *  A short description of the reason for the notification.
  */
-@property (copy, nonatomic) NSString *title;
+@property (copy, nonatomic, nullable) NSString *title;
 
 /**
  *  The message displayed in the notification interface.
  */
-@property (copy, nonatomic) NSString *message;
+@property (copy, nonatomic, nullable) NSString *message;
 
 /**
  *  An image to display in the notification interface.
  */
-@property (strong, nonatomic) UIImage *image;
+@property (strong, nonatomic, nullable) UIImage *image;
 
 /**
  *  The date and time when the presentation controller should deliver the notification.
  */
-@property (copy, nonatomic) NSDate *fireDate;
+@property (copy, nonatomic, nullable) NSDate *fireDate;
 
 /**
  *  Adds an user action to the notification.
@@ -45,17 +47,17 @@
 /**
  *  An array of possible actions to display in the notification.
  */
-@property (readonly, nonatomic) NSArray <MMNotificationAction *> *actions;
+@property (readonly, nonatomic, copy) NSArray <MMNotificationAction *> *actions;
 
 /**
  *  The user action to trigger when the user selects the notification.
  */
-@property (copy, nonatomic) MMNotificationAction *selectionAction;
+@property (copy, nonatomic, nullable) MMNotificationAction *selectionAction;
 
 /**
  *  A category to identify this notification.
  */
-@property (copy, nonatomic) NSString *category;
+@property (copy, nonatomic, nullable) NSString *category;
 
 @end
 
@@ -89,18 +91,18 @@ typedef NS_ENUM(NSUInteger, MMNotificationActionStyle){
 /**
  *  Create and return an action with the specified title and behavior.
  *
- *  @param title   The text to use for the button title. This parameter must not be @c nil.
+ *  @param title   The text to use for the button title.
  *  @param style   Additional styling information to apply to the button. Use the style information to convey the type of action that is performed by the button. For a list of possible values, see the constants in @c MMNotificationActionStyle.
  *  @param handler A block to execute when the user selects the action. This block has no return value and takes the selected action object as its only parameter.
  *
  *  @return A new notification action object.
  */
-+ (instancetype)actionWithTitle:(NSString *)title style:(MMNotificationActionStyle)style handler:(void (^)(MMNotificationAction *))handler;
++ (instancetype)actionWithTitle:(nullable NSString *)title style:(MMNotificationActionStyle)style handler:(void (^__nullable)(MMNotificationAction *))handler;
 
 /**
  *  The text to use for the button title.
  */
-@property (copy, readonly, nonatomic) NSString *title;
+@property (copy, readonly, nonatomic, nullable) NSString *title;
 
 /**
  *  Styling information to apply to the button.
@@ -108,3 +110,5 @@ typedef NS_ENUM(NSUInteger, MMNotificationActionStyle){
 @property (assign, readonly, nonatomic) MMNotificationActionStyle style;
 
 @end
+
+NS_ASSUME_NONNULL_END

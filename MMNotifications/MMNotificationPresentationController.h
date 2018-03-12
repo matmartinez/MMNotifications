@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MMLocalNotification;
 @protocol MMNotificationView;
 
@@ -61,9 +63,11 @@
  *
  *  @discussion The presentation controller will use the @c -category property of the @c MMLocalNotification class to display a custom notification view, if appropiate.
  *
- *  @param viewClass The custom notification view class to register.
+ *  @param viewClass The custom notification view class to register, or @c nil to deregister a class.
  *  @param category  The category of the notification that identify the registered class.
  */
-- (void)registerViewClass:(Class <MMNotificationView>)viewClass forNotificationCategory:(NSString *)category;
+- (void)registerViewClass:(nullable Class <MMNotificationView>)viewClass forNotificationCategory:(NSString *)category;
 
 @end
+
+NS_ASSUME_NONNULL_END
