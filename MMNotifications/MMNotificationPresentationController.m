@@ -93,6 +93,10 @@
 
 - (UIView *)_statusBarView
 {
+    if (@available(iOS 13.0, *)) {
+        return nil;
+    }
+    
     id statusBarKey = [@[ @"sta", @"tusBa", @"rWind", @"ow" ] componentsJoinedByString:@""];
     return [[UIApplication sharedApplication] valueForKey:statusBarKey];
 }
