@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MMNotifications"
-  s.version      = "0.1.4"
+  s.version      = "0.1.5"
   s.summary      = "Simple in-app notifications for iOS apps."
   s.homepage     = "http://www.matmartinez.net/"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
