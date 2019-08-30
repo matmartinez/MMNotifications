@@ -93,9 +93,11 @@
 
 - (UIView *)_statusBarView
 {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
     if (@available(iOS 13.0, *)) {
         return nil;
     }
+#endif
     
     id statusBarKey = [@[ @"sta", @"tusBa", @"rWind", @"ow" ] componentsJoinedByString:@""];
     return [[UIApplication sharedApplication] valueForKey:statusBarKey];
