@@ -23,6 +23,12 @@
         backgroundView.layer.shadowOpacity = 0.15f;
         backgroundView.layer.shouldRasterize = YES;
         
+#if defined(__has_attribute) && __has_attribute(availability)
+        if (@available(iOS 13.0, *)) {
+            backgroundView.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
+        }
+#endif
+        
         self.backgroundView = backgroundView;
         
         UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectZero];
