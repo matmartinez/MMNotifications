@@ -38,7 +38,15 @@
 
 - (void)awakeWithPresentationContext:(id<MMNotificationPresentationContext>)context
 {
-    UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
+    UIBlurEffectStyle style = UIBlurEffectStyleExtraLight;
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
+    if (@available(iOS 10.0, *)) {
+        style = UIBlurEffectStyleProminent;
+    }
+#endif
+    
+    UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:style];
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     effectView.userInteractionEnabled = NO;
     
