@@ -29,8 +29,9 @@
 		09858BBE2020F929008B5387 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BBD2020F929008B5387 /* main.m */; };
 		09858BC72020FC0F008B5387 /* DemoControllerAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BC62020FC0F008B5387 /* DemoControllerAction.m */; };
 		09858BCA202207C3008B5387 /* DemoActionCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BC9202207C3008B5387 /* DemoActionCollectionViewCell.m */; };
-		09858BCE20221167008B5387 /* MMNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EA76A1B990044004B8AA0 /* MMNotifications.framework */; };
 		09858BD1202218F5008B5387 /* DemoCustomNotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 09858BD0202218F5008B5387 /* DemoCustomNotificationView.m */; };
+		09C69342232A9CDC00D6CC9B /* MMNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EA76A1B990044004B8AA0 /* MMNotifications.framework */; };
+		09C69343232A9CDC00D6CC9B /* MMNotifications.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 094EA76A1B990044004B8AA0 /* MMNotifications.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,20 @@
 			remoteInfo = MMNotifications;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		09C69344232A9CDD00D6CC9B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				09C69343232A9CDC00D6CC9B /* MMNotifications.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		094811C31D7DC2FE003D31A2 /* MMBannerNotificationView_Wide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBannerNotificationView_Wide.h; sourceTree = "<group>"; };
@@ -90,7 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09858BCE20221167008B5387 /* MMNotifications.framework in Frameworks */,
+				09C69342232A9CDC00D6CC9B /* MMNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +237,7 @@
 				09858BA82020F929008B5387 /* Sources */,
 				09858BA92020F929008B5387 /* Frameworks */,
 				09858BAA2020F929008B5387 /* Resources */,
+				09C69344232A9CDD00D6CC9B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
