@@ -31,6 +31,7 @@
 @property (strong, nonatomic) UIView <MMNotificationView> *topView;
 @property (strong, nonatomic) id <MMNotificationPresentationContext> currentContext;
 @property (weak, nonatomic) _MMLocalNotificationWindow *window;
+@property (assign, nonatomic, getter=isUsingInteractiveDismiss) BOOL usingInteractiveDismiss;
 
 @end
 
@@ -70,6 +71,12 @@
 
 - (BOOL)shouldAffectStatusBarAppearance
 {
+#if defined(__has_attribute) && __has_attribute(availability)
+    if (@available(iOS 13.0, *)) {
+        return YES;
+    }
+#endif
+    
     return NO;
 }
 
@@ -82,7 +89,7 @@
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        // This window shouldn't affect status bar appearance. This is a private API.
+        // On older versions of iOS, we need to override this private API to opt-out this window of handling the status bar.
         NSString *canAffectSelectorString = [@[@"_can", @"Affect", @"Status", @"Bar", @"Appearance"] componentsJoinedByString:@""];
         SEL canAffectSelector = NSSelectorFromString(canAffectSelectorString);
         Method shouldAffectMethod = class_getInstanceMethod(self, @selector(shouldAffectStatusBarAppearance));
@@ -90,17 +97,16 @@
         class_addMethod(self, canAffectSelector, canAffectImplementation, method_getTypeEncoding(shouldAffectMethod));
     });
 }
-
 - (UIView *)_statusBarView
 {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-    if (@available(iOS 13.0, *)) {
-        return nil;
-    }
-#endif
+    const BOOL accessesStatusBarDirectly = !self.shouldAffectStatusBarAppearance;
     
-    id statusBarKey = [@[ @"sta", @"tusBa", @"rWind", @"ow" ] componentsJoinedByString:@""];
-    return [[UIApplication sharedApplication] valueForKey:statusBarKey];
+    if (accessesStatusBarDirectly) {
+        id statusBarKey = [@[ @"sta", @"tusBa", @"rWind", @"ow" ] componentsJoinedByString:@""];
+        return [[UIApplication sharedApplication] valueForKey:statusBarKey];
+    }
+    
+    return nil;
 }
 
 @end
@@ -113,9 +119,11 @@
         return;
     }
     
-    [self _transitionFromView:_topView toView:topView];
+    UIView <MMNotificationView> *previousView = _topView;
     
     _topView = topView;
+    
+    [self _transitionFromView:previousView toView:topView];
 }
 
 - (void)_transitionFromView:(UIView <MMNotificationView> *)fromView toView:(UIView <MMNotificationView> *)toView
@@ -125,7 +133,7 @@
     }
     
     if (toView) {
-        self.window.hidden = NO;
+        [self _setContainerWindowHidden:NO];
     }
     
     UIView *statusBar = self.window._statusBarView;
@@ -166,22 +174,83 @@
         
         statusBar.alpha = !(hidesStatusBar);
         
+        if (!toView && [self.window shouldAffectStatusBarAppearance]) {
+            [self setNeedsStatusBarAppearanceUpdate];
+        }
+        
     } completion:^(BOOL finished) {
         if (fromView) {
             [fromView removeFromSuperview];
         }
         
         if (!toView && !self.topView) {
-            self.window.hidden = YES;
+            [self _setContainerWindowHidden:YES];
         }
     }];
+}
+
+- (void)_setContainerWindowHidden:(BOOL)isHidden
+{
+    const BOOL animatesStatusBarTransition = ([self.window shouldAffectStatusBarAppearance]);
+    
+    dispatch_block_t handler = ^{
+        self.window.hidden = isHidden;
+    };
+    
+    if (animatesStatusBarTransition) {
+        [UIView animateWithDuration:0.2 animations:^{
+            [UIView performWithoutAnimation:handler];
+        }];
+    } else {
+        handler();
+    }
+}
+
+- (void)setUsingInteractiveDismiss:(BOOL)usingInteractiveDismiss
+{
+    if (usingInteractiveDismiss != _usingInteractiveDismiss) {
+        _usingInteractiveDismiss = usingInteractiveDismiss;
+        
+        if ([self.window shouldAffectStatusBarAppearance]) {
+            [self setNeedsStatusBarAppearanceUpdate];
+        }
+    }
 }
 
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
     
+    if (self.isUsingInteractiveDismiss) {
+        return;
+    }
+    
     self.topView.frame = [self _rectForView:self.topView];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+    return UIStatusBarAnimationFade;
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    UIView <MMNotificationView> *view = self.topView;
+    
+    if (self.isUsingInteractiveDismiss) {
+        view = nil;
+    }
+    
+    if (view != nil) {
+        const CGRect rect = [self _rectForView:view];
+        const BOOL isInsetFromTop = (rect.origin.y > 0.0f);
+        
+        if (!isInsetFromTop) {
+            return view.prefersStatusBarHidden;
+        }
+    }
+    
+    return NO;
 }
 
 - (CGRect)_rectForView:(UIView *)view
@@ -427,8 +496,10 @@
     CGPoint translation = [gestureRecognizer translationInView:view];
     CGFloat y = CGRectGetMinY(view.frame);
     
+    _MMLocalNotificationViewController *viewController = self.window.rootViewController;
+    
     const auto UIView *statusBar = self.window._statusBarView;
-    const CGRect rectForView = [self.window.rootViewController _rectForView:view];
+    const CGRect rectForView = [viewController _rectForView:view];
     const BOOL isInsetFromTop = (rectForView.origin.y > 0.0f);
     
     const BOOL affectingStatusBar = self._presentedNotificationPrefersStatusBarHidden && !isInsetFromTop;
@@ -475,12 +546,17 @@
                 statusBar.alpha = (CGFloat)(isDismissing);
             }
             
+            if (isDismissing) {
+                viewController.usingInteractiveDismiss = YES;
+            }
         } completion:^(BOOL finished) {
             if (isDismissing) {
                 [self _dismissPresentedNotification];
             } else {
                 [self _scheduleAutomaticDismiss];
             }
+            
+            viewController.usingInteractiveDismiss = NO;
         }];
     }
     
