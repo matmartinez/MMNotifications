@@ -1,7 +1,7 @@
 # MMNotifications
 A simple and customizable way to display in-app notifications. They match the system's look and feel, fully supporting iPhone X and the iPad.
 
-![MMNotifications](https://github.com/matmartinez/MMNotifications/blob/master/Screenshot.png)
+![MMNotifications](Screenshot.png)
 
 ## Installation
 
