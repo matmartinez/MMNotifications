@@ -132,18 +132,7 @@
     
     _messageLabel = messageLabel;
     
-    if (visualEffectsSupported && backgroundBlurEffect) {
-        UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:backgroundBlurEffect];
-        UIVisualEffectView *messageContainer = [[UIVisualEffectView alloc] initWithEffect:vibrancyEffect];
-        messageContainer.userInteractionEnabled = NO;
-        
-        [contentContainers addObject:messageContainer];
-        
-        [messageContainer.contentView addSubview:messageLabel];
-        [contentView addSubview:messageContainer];
-    } else {
-        [contentView addSubview:messageLabel];
-    }
+    [contentView addSubview:messageLabel];
     
     // Image view.
     UIImageView *imageView = [[UIImageView alloc] initWithImage:notification.image];
@@ -485,7 +474,11 @@
 
 - (UIColor *)_messageTextColor
 {
-    return nil;
+    if (@available(iOS 13.0, *)) {
+        return [UIColor secondaryLabelColor];
+    } else {
+        return nil;
+    }
 }
 
 - (UIColor *)_titleTextColor
